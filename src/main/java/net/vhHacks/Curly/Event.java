@@ -14,10 +14,23 @@ public class Event {
     private String title;
     private String host;
 
+    private String location;
+
     private DateFormat readableDateFormat;
 
-    public Event(String title) {
+    private TYPE thisType;
+
+    public static enum TYPE {
+        ACTIVITY,
+        VHHACKS,
+        WORKSHOP
+    }
+
+    public Event(String title, String host, String location, TYPE type) {
         this.title = title;
+        this.host = host;
+        this.location = location;
+        this.thisType = type;
 
         readableDateFormat = new SimpleDateFormat("MMM dd HH:mm");
     }
@@ -28,6 +41,10 @@ public class Event {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getTitle() {
@@ -44,13 +61,31 @@ public class Event {
 
     public void post(MessageChannel msgCh) {
 
+        String message = "Hey <@&761319214106804254>, I've got an event for you!";
+
+        msgCh.sendMessage(message).queue();
+
 
         EmbedBuilder eb = new EmbedBuilder();
 
-        eb.setColor(Color.BLUE);
+        switch (thisType) {
+            case ACTIVITY:
+                eb.setColor(Color.RED);
+                break;
+            case WORKSHOP:
+                eb.setColor(Color.MAGENTA);
+                break;
+            case VHHACKS:
+                eb.setColor(Color.CYAN);
+                break;
+            default:
+                eb.setColor(Color.GRAY);
+
+        }
         eb.setTitle(title);
-        eb.addField("Host", host, false);
-        eb.addField("Time", readableDateFormat.format(time), false);
+        eb.addField("Time (PDT, 24h)", readableDateFormat.format(time), false);
+        eb.addField("Location", location, false);
+        eb.addField("Hosted by", host, true);
 
         msgCh.sendMessage(eb.build()).queue();
 
@@ -58,7 +93,7 @@ public class Event {
 
     public void print() {
 
-        System.out.println("Host: " + host + "\nTime: " + readableDateFormat.format(time));
+        System.out.println("Host: " + host + "\nTime " + readableDateFormat.format(time));
 
     }
 

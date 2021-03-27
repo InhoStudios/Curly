@@ -8,13 +8,9 @@ public class Main {
 
     public static void main(String[] args) throws LoginException {
         Bot bot = new Bot();
-        runner = new Thread(bot);
+        Thread thread = new Thread(bot);
 
-        start();
-    }
-
-    public static void start() {
-        runner.start();
+        thread.start();
     }
 
 }
